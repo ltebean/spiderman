@@ -27,7 +27,14 @@ components:
   shop:   
     type: pageProcessor
     segues:
-      - to: shop
+      - to: mongodb
         func: 
           |
-          console.log($(".rst-name").text());
+          var shopName = $(".rst-name").text()
+          var address = $(".rst-detail-list .glyph-location").parent().text().trim();
+          offer({
+          	shopName:shopName,
+          	address:address
+          });
+  mongodb:   
+    type: mongodbAdaptor

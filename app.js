@@ -1,6 +1,11 @@
 var yaml=require('js-yaml');
 var fs=require('fs');
-var PageProcessor=require('./pageProcessor')
+
+
+var componentFactory={
+	'pageProcessor':require('./pageProcessor'),
+	'mongodbAdaptor':require('./mongodbAdaptor')
+}
 
 var config=yaml.load(fs.readFileSync('./config.yaml').toString());
 //console.dir(config)
@@ -8,7 +13,8 @@ var config=yaml.load(fs.readFileSync('./config.yaml').toString());
 var components={}
 
 for (var componentName in config.components) {
-	components[componentName]=new PageProcessor(componentName,config.components[componentName],processSegue)
+	var componentConfig=config.components[componentName];
+	components[componentName]=new componentFactory[componentConfig.type](componentName,componentConfig,processSegue)
 }
 
 function processSegue(to,data){
