@@ -1,14 +1,16 @@
 var yaml=require('js-yaml');
 var fs=require('fs');
+var util = require('util');
 
 
 var componentFactory={
-	'pageProcessor':require('./pageProcessor'),
-	'mongodbAdaptor':require('./mongodbAdaptor')
+	'pageProcessor':require('./lib/pageProcessor'),
+	'mongodbAdaptor':require('./lib/mongodbAdaptor')
 }
 
 var config=yaml.load(fs.readFileSync('./config.yaml').toString());
-//console.dir(config)
+
+console.log(util.inspect(config, {showHidden: false, depth: null}));//console.dir(config)
 
 var components={}
 
