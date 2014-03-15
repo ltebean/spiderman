@@ -1,6 +1,6 @@
 startup:
-    url: http://ele.me/sitemap/place/310000/a/1
-    component: addressList
+  url: http://ele.me/sitemap/place/310000/a/1
+  component: addressList
 components:
   addressList:   
     type: pageProcessor
