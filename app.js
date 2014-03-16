@@ -10,7 +10,7 @@ var componentFactory={
 
 var config=yaml.load(fs.readFileSync('./config.yaml').toString());
 
-console.log(util.inspect(config, {showHidden: false, depth: null}));//console.dir(config)
+//console.log(util.inspect(config, {showHidden: false, depth: null}));//console.dir(config)
 
 var components={}
 
