@@ -75,18 +75,4 @@
 	z-index:3;
 }
 
-#shop {
-	left:10em;
-	top:5em;
-}
-
-#shopList {
-	left:35em;
-	top:12em;
-}
-#mongodb {
-	left:12em;
-	top:23em;
-}
-
 .dragHover { border:2px solid orange; }
