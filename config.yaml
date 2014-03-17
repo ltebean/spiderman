@@ -34,6 +34,8 @@ components:
           });
   mongodb:   
     type: mongodbAdaptor
-    host: 127.0.0.1
-    port: 27017
-    collection: shop
+    dbConfig:
+      host: 127.0.0.1
+      port: 27017
+      db: spider
+      collection: shop

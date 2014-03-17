@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="GroupAdmin">
 <head>
+	<link href="/public/assets/css/bootstrap.min.css"  rel="stylesheet" type="text/css" />
+
 	<link href="/public/assets/css/app.css"  rel="stylesheet" type="text/css" />
 	<style type="text/css"></style>
 	<script src="/public/assets/js/jquery.js "></script>
@@ -114,6 +116,13 @@
 			ep.appendTo(title);
 			div.appendTo(this.container)
 			this.dom = div;
+
+			var that=this
+			this.dom.mouseleave(function(e){
+				that.config.position=$(this).position();
+				console.log(that.config.position)
+			})
+
 		};
 
 		Component.prototype.remove = function() {
@@ -130,6 +139,8 @@
 			};	
 		};
 
+
+		
 
 		(function() {
 
@@ -158,8 +169,26 @@
 							cssClass: "aLabel"
 						}]
 					],
-					Container: "statemachine-demo"
+					Container: "board"
 				});
+
+				$('#new-component-btn').click(function(){
+					var name=$('#new-component-name').val();
+					var componentConfig={
+						type:'pageProcessor',
+						segues:[],
+						position: {
+							top: '100px',
+							left: '100px'
+						}}
+					new Component({
+						name:name,
+						config:componentConfig,
+						container:$('#board'),
+						instance:instance
+					}).redraw();
+					config[name]=componentConfig;				
+				})
 
 				var componentArray=[];
 
@@ -172,7 +201,7 @@
 							var c=new Component({
 								name:componentName,
 								config:component,
-								container:$('.statemachine-demo'),
+								container:$('#board'),
 								instance:instance
 							});
 							componentArray.push(c);
@@ -180,26 +209,18 @@
 						}
 					}
 
-				initDomFromConfig(config)
-
-
-				var windows = jsPlumb.getSelector(".statemachine-demo .w");
-
-				// initialise draggable elements.  
-				instance.draggable(windows);
 				
 				
 
 				// suspend drawing and initialise.
+				function initBoard(){
+					initDomFromConfig(config)
 
-				instance.doWhileSuspended(function() {
+					var windows = jsPlumb.getSelector("#board .w");
 
-					// make each ".ep" div a source and give it some parameters to work with.  here we tell it
-					// to use a Continuous anchor and the StateMachine connectors, and also we give it the
-					// connector's paint style.  note that in this demo the strokeStyle is dynamically generated,
-					// which prevents us from just setting a jsPlumb.Defaults.PaintStyle.  but that is what i
-					// would recommend you do. Note also here that we use the 'filter' option to tell jsPlumb
-					// which parts of the element should actually respond to a drag start.
+					// initialise draggable elements.  
+					instance.draggable(windows);
+				
 					instance.makeSource(windows, {
 						filter: ".ep", // only supported by jquery
 						anchor: "Continuous",
@@ -231,7 +252,8 @@
 						component.drawConnection()
 					})
 
-				});
+				}
+				instance.doWhileSuspended(initBoard);
 
 			});
 		})();
@@ -241,7 +263,18 @@
 
 </head>
 <body>
-	<div class="demo statemachine-demo" id="statemachine-demo"></div>
+	<div id="app" class="row">
+		<div id="board" class="col-md-9"></div>
+		<div id="panel" class="col-md-3">
+			  <form class="form-inline" role="form">
+				  <div class="form-group">
+				    <input id="new-component-name" type="text" class="form-control" id="" placeholder="Enter Name">
+				  </div>
+				  <a href="javascript:;" class="btn btn-success" id="new-component-btn">add</a>
+
+			</form>
+		</div>
+	</div>	
 </body>
 
 </html>

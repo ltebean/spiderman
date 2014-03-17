@@ -1,6 +1,15 @@
+html,body,#app{
+	height:100%;
+}
+
+#panel{
+	height: 100%;
+	border-left: 1px solid #999999;
+	padding: 20px;
+}
 
 .w { 	
-  width:auto;
+ 	width:auto;
 	padding:16px;
 	position:absolute;
 	border: 1px solid black;
@@ -70,10 +79,6 @@
 
 .w .ep:hover {
 	box-shadow: 0px 0px 6px black;
-}
-
-.statemachine-demo ._jsPlumb_endpoint {
-	z-index:3;
 }
 
 .dragHover { border:2px solid orange; }

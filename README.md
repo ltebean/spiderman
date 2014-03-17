@@ -2,10 +2,14 @@ Spiderman works much like alfred workflow and ios storyboard, you write crawler 
 
 The whole logic is stored in this form:
 
-	startup:
-	  url: http://www.dianping.com/search/category/1/0
-	  component: shopList
 	components:
+	  initializer:   
+	    type: initializer
+	    segues:
+	      - to: shopList
+	        func: 
+	          |
+	          offer("http://www.dianping.com/search/category/1/0");
 	  shopList:   
 	    type: pageProcessor
 	    segues:
