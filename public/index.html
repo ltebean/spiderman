@@ -1,191 +1,218 @@
 <!DOCTYPE html>
 <html ng-app="GroupAdmin">
-	<head>
-   <link href="/public/assets/css/app.css"  rel="stylesheet" type="text/css" />
-	<style type="text/css">
+<head>
+	<link href="/public/assets/css/app.css"  rel="stylesheet" type="text/css" />
+	<style type="text/css"></style>
+	<script src="/public/assets/js/jquery.js "></script>
 
-</style>
-<script src="/public/assets/js/jquery.js "></script>
+	<script src="/public/assets/js/jquery-ui.js "></script>
+	<script src="/public/assets/js/jsPlumb.js "></script>
 
-<script src="/public/assets/js/jquery-ui.js "></script>
-<script src="/public/assets/js/jsPlumb.js "></script>
+	<script type=""text/javascript>
+		var config = {
+			components: {
+				mongodb: {
+					position: {
+						top: '400px',
+						left: '800px'
+					},
+					type: 'mongodbAdaptor',
+				},
+				shopList: {
+					type: 'pageProcessor',
+					position: {
+						top: '100px',
+						left: '400px'
+					},
 
-<script type=""text/javascript>
-	var config={ 
-        components:{ 
-            mongodb:{ 
-                position:{top:'400px',left:'800px'}, 
-			     type: 'mongodbAdaptor',
-			},
-			shopList: { 
-                  type: 'pageProcessor',
-                  position:{top:'100px',left:'400px'}, 
-
-                  segues: [{
-                     to:'shopList',
-                     func:"blabla"
-                  },{
-                     to:'shop',
-                     func:"blabla"
-                  }] 
-              },
-			 shop: { 
-                  position:{top:'400px',left:'400px'}, 
-                  type: 'pageProcessor',
-                  segues: [{
-                    to:'mongodb',
-                    func:'haha'
-                  }] 
-              } 
-          },
-		startup:{ 
-              position:{top:'100px',left:'800px'}, 
-              url: 'http://ele.me/sitemap/place/310000/a/1',
-			  component: 'shopList' 
-          } 
-      };
-
-      
-
-	(function() {
-	
-	jsPlumb.ready(function() {
-        initDomFromConfig(config)
-
-        function initDomFromConfig(config){
-            var startup=config.startup;
-            createComponent('startup',startup.position);
-            var components=config.components;
-            for(var componentName in components){
-                var component=components[componentName];
-                createComponent(componentName,component.position);
-            }
-        }
-
-        // setup some defaults for jsPlumb. 
-        var instance = jsPlumb.getInstance({
-            Endpoint : ["Dot", {radius:2}],
-            HoverPaintStyle : {strokeStyle:"#1e8151", lineWidth:2 },
-            ConnectionOverlays : [
-                [ "Arrow", { 
-                    location:1,
-                    id:"arrow",
-                    length:14,
-                    foldback:0.8
-                } ],
-                [ "Label", { label:"FOO", id:"label", cssClass:"aLabel" }]
-            ],
-            Container:"statemachine-demo"
-        });
-
-        var windows = jsPlumb.getSelector(".statemachine-demo .w");
-
-        // initialise draggable elements.  
-        instance.draggable(windows);
-
-        
-        
-
-        function createComponent(name,position){
-                var container=$('.statemachine-demo');
-
-                var div=$("<div>",{
-                    class:'w',
-                    id:name,
-                    css:position
-                });
-                var title=$("<span>",{
-                    class:'title',
-                    text:name
-                });
-                var ep=$("<span>",{
-                    class:'ep'
-                });
-                title.appendTo(div);
-                ep.appendTo(title);
-                div.appendTo(container)
-                return div;
-        }
-
-
-        
-						
-		
-        // bind a click listener to each connection; the connection is deleted. you could of course
-		// just do this: jsPlumb.bind("click", jsPlumb.detach), but I wanted to make it clear what was
-		// happening.
-		instance.bind("click", function(connection) { 
-			instance.detach(connection); 
-		});
-
-		// bind a connection listener. note that the parameter passed to this function contains more than
-		// just the new connection - see the documentation for a full list of what is included in 'info'.
-		// this listener sets the connection's internal
-		// id as the label overlay's text.
-        instance.bind("connection", function(info) {
-            console.dir(info)
-			info.connection.getOverlay("label").setLabel("script");
-        });
-
-		// suspend drawing and initialise.
-		instance.doWhileSuspended(function() {
-										
-			// make each ".ep" div a source and give it some parameters to work with.  here we tell it
-			// to use a Continuous anchor and the StateMachine connectors, and also we give it the
-			// connector's paint style.  note that in this demo the strokeStyle is dynamically generated,
-			// which prevents us from just setting a jsPlumb.Defaults.PaintStyle.  but that is what i
-			// would recommend you do. Note also here that we use the 'filter' option to tell jsPlumb
-			// which parts of the element should actually respond to a drag start.
-			instance.makeSource(windows, {
-				filter:".ep",				// only supported by jquery
-				anchor:"Continuous",
-				connector:[ "StateMachine", { curviness:20 } ],
-				connectorStyle:{ strokeStyle:"#5c96bc", lineWidth:2, outlineColor:"transparent", outlineWidth:4 },
-				maxConnections:5,
-				onMaxConnections:function(info, e) {
-					alert("Maximum connections (" + info.maxConnections + ") reached");
+					segues: [{
+						to: 'shopList',
+						func: "blabla"
+					}, {
+						to: 'shop',
+						func: "blabla"
+					}]
+				},
+				shop: {
+					position: {
+						top: '400px',
+						left: '400px'
+					},
+					type: 'pageProcessor',
+					segues: [{
+						to: 'mongodb',
+						func: 'haha'
+					}]
 				}
-			});						
+			},
+			startup: {
+				position: {
+					top: '100px',
+					left: '800px'
+				},
+				url: 'http://ele.me/sitemap/place/310000/a/1',
+				component: 'shopList'
+			}
+		};
 
-			// initialise all '.w' elements as connection targets.
-	        instance.makeTarget(windows, {
-				dropOptions:{ hoverClass:"dragHover" },
-				anchor:"Continuous"				
+
+
+		(function() {
+
+			jsPlumb.ready(function() {
+				initDomFromConfig(config)
+
+				function initDomFromConfig(config) {
+					var startup = config.startup;
+					createComponent('startup', startup.position);
+					var components = config.components;
+					for (var componentName in components) {
+						var component = components[componentName];
+						createComponent(componentName, component.position);
+					}
+				}
+
+				// setup some defaults for jsPlumb. 
+				var instance = jsPlumb.getInstance({
+					Endpoint: ["Dot", {
+						radius: 2
+					}],
+					HoverPaintStyle: {
+						strokeStyle: "#1e8151",
+						lineWidth: 2
+					},
+					ConnectionOverlays: [
+						["Arrow", {
+							location: 1,
+							id: "arrow",
+							length: 14,
+							foldback: 0.8
+						}],
+						["Label", {
+							label: "FOO",
+							id: "label",
+							cssClass: "aLabel"
+						}]
+					],
+					Container: "statemachine-demo"
+				});
+
+				var windows = jsPlumb.getSelector(".statemachine-demo .w");
+
+				// initialise draggable elements.  
+				instance.draggable(windows);
+
+
+
+				function createComponent(name, position) {
+					var container = $('.statemachine-demo');
+
+					var div = $("<div>", {
+						class: 'w',
+						id: name,
+						css: position
+					});
+					var title = $("<span>", {
+						class: 'title',
+						text: name
+					});
+					var ep = $("<span>", {
+						class: 'ep'
+					});
+					title.appendTo(div);
+					ep.appendTo(title);
+					div.appendTo(container)
+					return div;
+				}
+
+
+
+				// bind a click listener to each connection; the connection is deleted. you could of course
+				// just do this: jsPlumb.bind("click", jsPlumb.detach), but I wanted to make it clear what was
+				// happening.
+				instance.bind("click", function(connection) {
+					instance.detach(connection);
+				});
+
+				// bind a connection listener. note that the parameter passed to this function contains more than
+				// just the new connection - see the documentation for a full list of what is included in 'info'.
+				// this listener sets the connection's internal
+				// id as the label overlay's text.
+				instance.bind("connection", function(info) {
+					console.dir(info)
+					info.connection.getOverlay("label").setLabel("script");
+				});
+
+				// suspend drawing and initialise.
+				instance.doWhileSuspended(function() {
+
+					// make each ".ep" div a source and give it some parameters to work with.  here we tell it
+					// to use a Continuous anchor and the StateMachine connectors, and also we give it the
+					// connector's paint style.  note that in this demo the strokeStyle is dynamically generated,
+					// which prevents us from just setting a jsPlumb.Defaults.PaintStyle.  but that is what i
+					// would recommend you do. Note also here that we use the 'filter' option to tell jsPlumb
+					// which parts of the element should actually respond to a drag start.
+					instance.makeSource(windows, {
+						filter: ".ep", // only supported by jquery
+						anchor: "Continuous",
+						connector: ["StateMachine", {
+							curviness: 20
+						}],
+						connectorStyle: {
+							strokeStyle: "#5c96bc",
+							lineWidth: 2,
+							outlineColor: "transparent",
+							outlineWidth: 4
+						},
+						maxConnections: 5,
+						onMaxConnections: function(info, e) {
+							alert("Maximum connections (" + info.maxConnections + ") reached");
+						}
+					});
+
+					// initialise all '.w' elements as connection targets.
+					instance.makeTarget(windows, {
+						dropOptions: {
+							hoverClass: "dragHover"
+						},
+						anchor: "Continuous"
+					});
+
+					function connectAllComponent(config) {
+						var startup = config.startup;
+						instance.connect({
+							source: 'startup',
+							target: startup.component
+						});
+
+						var components = config.components;
+						for (var componentName in components) {
+							var component = components[componentName];
+							if (!component.segues || component.segues.length == 0) continue;
+							for (var i = component.segues.length - 1; i >= 0; i--) {
+								var segue = component.segues[i]
+								instance.connect({
+									source: componentName,
+									target: segue.to
+								});
+							};
+
+						}
+					}
+
+					connectAllComponent(config);
+
+				});
+
 			});
-
-            function connectAllComponent(config){
-                var startup=config.startup;
-                instance.connect({ source:'startup', target:startup.component});
-
-                var components=config.components;
-                for(var componentName in components){
-                    var component=components[componentName];
-                    if(!component.segues || component.segues.length==0) continue;
-                    for (var i = component.segues.length - 1; i >= 0; i--) {
-                        var segue = component.segues[i]
-                        instance.connect({ source:componentName, target:segue.to});
-                    };
-                    
-                }
-            }
-
-            connectAllComponent(config);
-			
-		});
-	
-	});
-})();
+		})();
 
 
-		</script>
+    </script>
 
-
-	</head>
-	<body>
-	  <div class="demo statemachine-demo" id="statemachine-demo">
-                
-              
-            </div>
+</head>
+<body>
+	<div class="demo statemachine-demo" id="statemachine-demo"></div>
 </body>
 
 </html>
