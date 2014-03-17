@@ -1,7 +1,11 @@
-startup:
-  url: http://www.dianping.com/search/category/1/0
-  component: shopList
 components:
+  initializer:   
+    type: initializer
+    segues:
+      - to: shopList
+        func: 
+          |
+          offer("http://www.dianping.com/search/category/1/0");
   shopList:   
     type: pageProcessor
     segues:

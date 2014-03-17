@@ -11,11 +11,23 @@
 	<script type=""text/javascript>
 		var config = {
 			components: {
+				startup: {
+					position: {
+						top: '100px',
+						left: '800px'
+					},
+					segues:[{
+						func: 'http://ele.me/sitemap/place/310000/a/1',
+						to: 'shopList'
+					}],
+					type: 'startup'
+				},
 				mongodb: {
 					position: {
 						top: '400px',
 						left: '800px'
 					},
+					segues:[],
 					type: 'mongodbAdaptor',
 				},
 				shopList: {
@@ -44,34 +56,86 @@
 						func: 'haha'
 					}]
 				}
-			},
-			startup: {
-				position: {
-					top: '100px',
-					left: '800px'
-				},
-				url: 'http://ele.me/sitemap/place/310000/a/1',
-				component: 'shopList'
 			}
 		};
 
+		function Component(options){
+			this.name=options.name;
+			this.config=options.config;
+			if(!this.config.segues || this.config.segues.length==0){
+				this.config.segues=[];
+			}
+			this.container=options.container;
+			this.instance=options.instance;
+			var that=this;
+			this.instance.bind("connection", function(info) {			
+				for (var i = 0; i < that.config.segues.length; i++) {
+					if(info.targetId==that.config.segues[i].to){
+						return;
+					}
+				};	
+				if(info.sourceId==that.name){
+					that.config.segues.push({
+						to:info.targetId,
+						func:''
+					});
+				}
+				console.dir(that.config)
+			});
+			this.instance.bind("click", function(connection) {
+				if(connection.sourceId!=that.name){
+					return;
+				}
+				for (var i = 0; i < that.config.segues.length; i++) {
+					var segue = that.config.segues[i]; 
+					if(connection.targetId==segue.to){
+						// show editor(segue)
+					}
+				};
+			});
+
+		}
+
+		Component.prototype.redraw = function() {
+			$('#'+this.name).remove();
+			var div = $("<div>", {
+				class: 'w',
+				id: this.name,
+				css: this.config.position
+			});
+			var title = $("<span>", {
+				class: 'title',
+				text: this.name
+			});
+			var ep = $("<span>", {
+				class: 'ep'
+			});
+			title.appendTo(div);
+			ep.appendTo(title);
+			div.appendTo(this.container)
+			this.dom = div;
+		};
+
+		Component.prototype.remove = function() {
+			$('#'+this.name).remove();
+		};
+
+		Component.prototype.drawConnection = function() {
+			for (var i = 0; i < this.config.segues.length; i++) {
+				var segue=this.config.segues[i];
+				this.instance.connect({
+					source: this.name,
+					target: segue.to
+				});
+			};	
+		};
 
 
 		(function() {
 
 			jsPlumb.ready(function() {
-				initDomFromConfig(config)
 
-				function initDomFromConfig(config) {
-					var startup = config.startup;
-					createComponent('startup', startup.position);
-					var components = config.components;
-					for (var componentName in components) {
-						var component = components[componentName];
-						createComponent(componentName, component.position);
-					}
-				}
-
+				
 				// setup some defaults for jsPlumb. 
 				var instance = jsPlumb.getInstance({
 					Endpoint: ["Dot", {
@@ -89,7 +153,7 @@
 							foldback: 0.8
 						}],
 						["Label", {
-							label: "FOO",
+							label: "edit",
 							id: "label",
 							cssClass: "aLabel"
 						}]
@@ -97,53 +161,37 @@
 					Container: "statemachine-demo"
 				});
 
+				var componentArray=[];
+
+				function initDomFromConfig(config) {
+						var startup = config.startup;
+						//createComponent('startup', startup.position);
+						var components = config.components;
+						for (var componentName in components) {
+							var component = components[componentName];
+							var c=new Component({
+								name:componentName,
+								config:component,
+								container:$('.statemachine-demo'),
+								instance:instance
+							});
+							componentArray.push(c);
+							c.redraw();
+						}
+					}
+
+				initDomFromConfig(config)
+
+
 				var windows = jsPlumb.getSelector(".statemachine-demo .w");
 
 				// initialise draggable elements.  
 				instance.draggable(windows);
-
-
-
-				function createComponent(name, position) {
-					var container = $('.statemachine-demo');
-
-					var div = $("<div>", {
-						class: 'w',
-						id: name,
-						css: position
-					});
-					var title = $("<span>", {
-						class: 'title',
-						text: name
-					});
-					var ep = $("<span>", {
-						class: 'ep'
-					});
-					title.appendTo(div);
-					ep.appendTo(title);
-					div.appendTo(container)
-					return div;
-				}
-
-
-
-				// bind a click listener to each connection; the connection is deleted. you could of course
-				// just do this: jsPlumb.bind("click", jsPlumb.detach), but I wanted to make it clear what was
-				// happening.
-				instance.bind("click", function(connection) {
-					instance.detach(connection);
-				});
-
-				// bind a connection listener. note that the parameter passed to this function contains more than
-				// just the new connection - see the documentation for a full list of what is included in 'info'.
-				// this listener sets the connection's internal
-				// id as the label overlay's text.
-				instance.bind("connection", function(info) {
-					console.dir(info)
-					info.connection.getOverlay("label").setLabel("script");
-				});
+				
+				
 
 				// suspend drawing and initialise.
+
 				instance.doWhileSuspended(function() {
 
 					// make each ".ep" div a source and give it some parameters to work with.  here we tell it
@@ -178,29 +226,10 @@
 						anchor: "Continuous"
 					});
 
-					function connectAllComponent(config) {
-						var startup = config.startup;
-						instance.connect({
-							source: 'startup',
-							target: startup.component
-						});
-
-						var components = config.components;
-						for (var componentName in components) {
-							var component = components[componentName];
-							if (!component.segues || component.segues.length == 0) continue;
-							for (var i = component.segues.length - 1; i >= 0; i--) {
-								var segue = component.segues[i]
-								instance.connect({
-									source: componentName,
-									target: segue.to
-								});
-							};
-
-						}
-					}
-
-					connectAllComponent(config);
+					
+					componentArray.forEach(function(component){
+						component.drawConnection()
+					})
 
 				});
 

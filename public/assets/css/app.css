@@ -42,8 +42,9 @@
 
 .aLabel {
 	background-color:white;
+	font-size:10px;
 	opacity:0.8;
-	padding:0.3em;				
+	padding:8px;				
 	border-radius:0.5em;
 	border:1px solid #346789;
 	cursor:pointer;
