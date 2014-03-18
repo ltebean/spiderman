@@ -8,6 +8,8 @@
 	<script src="/public/assets/js/jquery.js "></script>
 
 	<script src="/public/assets/js/jquery-ui.js "></script>
+        <script src="/public/assets/js/bootstrap.min.js "></script>
+
 	<script src="/public/assets/js/jsPlumb.js "></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
@@ -15,7 +17,7 @@
 			socket.emit('register', {});
 			socket.on('register:success',function(clientId){
 				console.log('clientId:'+clientId);
-				socket.emit('job:start', {});
+				//socket.emit('job:start', {});
 			})
 			socket.on('data', function (data) {
 			    console.log(data);
@@ -25,51 +27,54 @@
 	<script type=""text/javascript>
 		var config = {
 			components: {
-				startup: {
+				initializer: {
 					position: {
 						top: '100px',
 						left: '800px'
 					},
-					segues:[{
-						func: 'http://ele.me/sitemap/place/310000/a/1',
-						to: 'shopList'
-					}],
-					type: 'startup'
+					segues:[],
+					type: 'initializer'
 				},
 				mongodb: {
+                    dbConfig:{
+                        host:'127.0.0.1',
+                        port:27017,
+                        db:'spider',
+                        collection:'shop'
+                    },
 					position: {
 						top: '400px',
 						left: '800px'
 					},
 					segues:[],
 					type: 'mongodbAdaptor',
-				},
-				shopList: {
-					type: 'pageProcessor',
-					position: {
-						top: '100px',
-						left: '400px'
-					},
-
-					segues: [{
-						to: 'shopList',
-						func: "func"
-					}, {
-						to: 'shop',
-						func: "func"
-					}]
-				},
-				shop: {
-					position: {
-						top: '400px',
-						left: '400px'
-					},
-					type: 'pageProcessor',
-					segues: [{
-						to: 'mongodb',
-						func: 'haha'
-					}]
 				}
+				// shopList: {
+				// 	type: 'pageProcessor',
+				// 	position: {
+				// 		top: '100px',
+				// 		left: '400px'
+				// 	},
+
+				// 	segues: [{
+				// 		to: 'shopList',
+				// 		func: 'offer("http://www.dianping.com"+$(".NextPage").attr("href"));'
+				// 	}, {
+				// 		to: 'shop',
+				// 		func: '$(".BL").each(function() {offer("http://www.dianping.com"+($(this).attr("href")));})'
+				// 	}]
+				// },
+				// shop: {
+				// 	position: {
+				// 		top: '400px',
+				// 		left: '400px'
+				// 	},
+				// 	type: 'pageProcessor',
+				// 	segues: [{
+				// 		to: 'mongodb',
+				// 		func: ' offer({shopName:$(".shop-title").text()});'
+				// 	}]
+				// }
 			}
 		};
 
@@ -94,7 +99,7 @@
 						func:''
 					});
 				}
-				console.dir(that.config)
+				//console.dir(that.config)
 			});
 			this.instance.bind("click", function(connection) {
 				if(connection.sourceId!=that.name){
@@ -104,12 +109,23 @@
 					var segue = that.config.segues[i]; 
 					if(connection.targetId==segue.to){
 						// alert(segue.func)
-						that.instance.detach(connection)
+						//that.instance.detach(connection)
+                        $('#segue-func').val(segue.func);
+                        currentSegue=segue;
+                        currentConnection=connection;
+                        currentComponentConfig=that.config
+                        $('#editor').modal({})
 					}
 				};
 			});
 
 		}
+
+        var currentComponentConfig;
+
+        var currentSegue;
+
+        var currentConnection;
 
 		Component.prototype.redraw = function() {
 			$('#'+this.name).remove();
@@ -133,8 +149,38 @@
 			var that=this
 			this.dom.mouseleave(function(e){
 				that.config.position=$(this).position();
-				console.log(that.config.position)
+				//console.log(that.config.position)
 			})
+            initDom(this.dom);
+            function initDom(dom){
+                    that.instance.draggable(dom);
+
+                    // initialise all '.w' elements as connection targets.
+                    that.instance.makeTarget(dom, {
+                        dropOptions: {
+                            hoverClass: "dragHover"
+                        },
+                        anchor: "Continuous"
+                    });
+
+                    that.instance.makeSource(dom, {
+                        filter: ".ep", // only supported by jquery
+                        anchor: "Continuous",
+                        connector: ["StateMachine", {
+                            curviness: 20
+                        }],
+                        connectorStyle: {
+                            strokeStyle: "#5c96bc",
+                            lineWidth: 2,
+                            outlineColor: "transparent",
+                            outlineWidth: 4
+                        },
+                        maxConnections: 5,
+                        onMaxConnections: function(info, e) {
+                            alert("Maximum connections (" + info.maxConnections + ") reached");
+                        }
+                    });
+                }
 
 		};
 
@@ -200,67 +246,42 @@
 						container:$('#board'),
 						instance:instance
 					}).redraw();
-					config[name]=componentConfig;				
+					config.components[name]=componentConfig;				
 				})
 
-				var componentArray=[];
+                $('#delete-segue-btn').click(function(){
+                    var index=currentComponentConfig.segues.indexOf(currentSegue);
+                    currentComponentConfig.segues.splice(index,0);
+                    console.log(currentComponentConfig.segues);
+                    instance.detach(currentConnection);
 
-				function initDomFromConfig(config) {
-						var startup = config.startup;
-						//createComponent('startup', startup.position);
-						var components = config.components;
-						for (var componentName in components) {
-							var component = components[componentName];
-							var c=new Component({
-								name:componentName,
-								config:component,
-								container:$('#board'),
-								instance:instance
-							});
-							componentArray.push(c);
-							c.redraw();
-						}
-					}
+                })
 
-				
-				
+                $('#update-segue-btn').click(function(){
+                    currentSegue.func=$('#segue-func').val();
+                })
+
+                $('#run-job-btn').click(function(){
+                    socket.emit('job:start', config);
+
+                })
 
 				// suspend drawing and initialise.
 				function initBoard(){
-					initDomFromConfig(config)
-
-					var windows = jsPlumb.getSelector("#board .w");
-
-					// initialise draggable elements.  
-					instance.draggable(windows);
-				
-
-
-					// initialise all '.w' elements as connection targets.
-					instance.makeTarget(windows, {
-						dropOptions: {
-							hoverClass: "dragHover"
-						},
-						anchor: "Continuous"
-					});
-
-					instance.makeSource(windows, {
-						filter: ".ep", // only supported by jquery
-						anchor: "Continuous",
-						connector: ["StateMachine", {
-							curviness: 20
-						}],
-						connectorStyle: {
-							strokeStyle: "#5c96bc",
-							lineWidth: 2,
-							outlineColor: "transparent",
-							outlineWidth: 4
-						},
-						maxConnections: 5,
-						onMaxConnections: function(info, e) {
-							alert("Maximum connections (" + info.maxConnections + ") reached");
-						}
-					});
+                    var componentArray=[];
+					
+                    var components = config.components;
+                        for (var componentName in components) {
+                            var component = components[componentName];
+                            var c=new Component({
+                                name:componentName,
+                                config:component,
+                                container:$('#board'),
+                                instance:instance
+                            });
+                            componentArray.push(c);
+                            c.redraw();
+                        }
 					
 					componentArray.forEach(function(component){
 						component.drawConnection()
@@ -285,10 +306,39 @@
 				    <input id="new-component-name" type="text" class="form-control" id="" placeholder="Enter Name">
 				  </div>
 				  <a href="javascript:;" class="btn btn-success" id="new-component-btn">add</a>
+                  <div class="form-group">
+                              <a href="javascript:;" class="btn btn-success" id="run-job-btn">run</a>
+
+                  </div>
 
 			</form>
 		</div>
 	</div>	
+ <div id="editor" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Edit Segue</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">function:</label>
+            <div class="col-sm-10">
+              <textarea id="segue-func" style="height:200px" class="form-control" id="" placeholder=""></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+        <button id="delete-segue-btn" type="button" class="btn btn-danger" data-dismiss="modal">delete</button>
+        <button id="update-segue-btn" type="button" class="btn btn-primary" data-dismiss="modal">confirm</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 
 </html>
