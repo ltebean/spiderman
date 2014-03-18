@@ -9,6 +9,15 @@
 
 	<script src="/public/assets/js/jquery-ui.js "></script>
 	<script src="/public/assets/js/jsPlumb.js "></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io.connect('http://localhost');
+			socket.emit('register', {});
+			socket.emit('startJob', {});
+			socket.on('data', function (data) {
+			    console.log(data);
+			});
+	</script>
 
 	<script type=""text/javascript>
 		var config = {
@@ -41,10 +50,10 @@
 
 					segues: [{
 						to: 'shopList',
-						func: "blabla"
+						func: "func"
 					}, {
 						to: 'shop',
-						func: "blabla"
+						func: "func"
 					}]
 				},
 				shop: {
@@ -91,7 +100,8 @@
 				for (var i = 0; i < that.config.segues.length; i++) {
 					var segue = that.config.segues[i]; 
 					if(connection.targetId==segue.to){
-						// show editor(segue)
+						// alert(segue.func)
+						that.instance.detach(connection)
 					}
 				};
 			});
@@ -221,6 +231,16 @@
 					// initialise draggable elements.  
 					instance.draggable(windows);
 				
+
+
+					// initialise all '.w' elements as connection targets.
+					instance.makeTarget(windows, {
+						dropOptions: {
+							hoverClass: "dragHover"
+						},
+						anchor: "Continuous"
+					});
+
 					instance.makeSource(windows, {
 						filter: ".ep", // only supported by jquery
 						anchor: "Continuous",
@@ -238,15 +258,6 @@
 							alert("Maximum connections (" + info.maxConnections + ") reached");
 						}
 					});
-
-					// initialise all '.w' elements as connection targets.
-					instance.makeTarget(windows, {
-						dropOptions: {
-							hoverClass: "dragHover"
-						},
-						anchor: "Continuous"
-					});
-
 					
 					componentArray.forEach(function(component){
 						component.drawConnection()
