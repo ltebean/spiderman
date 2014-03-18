@@ -13,7 +13,10 @@
 	<script>
 		var socket = io.connect('http://localhost');
 			socket.emit('register', {});
-			socket.emit('startJob', {});
+			socket.on('register:success',function(clientId){
+				console.log('clientId:'+clientId);
+				socket.emit('job:start', {});
+			})
 			socket.on('data', function (data) {
 			    console.log(data);
 			});

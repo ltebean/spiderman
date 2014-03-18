@@ -31,10 +31,11 @@ io.sockets.on('connection', function (socket) {
 		clientId=messenger.registerClient(function(msg){		
 			socket.emit('data',msg);
 		});
+		socket.emit('register:success',clientId);
 		//msg.addMessage(weiboId,'hahaha');
 	});
 
-	socket.on('startJob',function(config){
+	socket.on('job:start',function(config){
 		config.clientId=clientId;
 		new Spiderman(config).start();
 	})
