@@ -1,0 +1,19 @@
+extends layout
+
+block script
+    script.
+        var config = !{JSON.stringify(config)}
+        var types = !{JSON.stringify(Object.keys(config.components))}
+    script(src="/js/index.js")
+
+block content
+    #app.row(ng-controller="configCtrl")
+        #board.col-md-9
+            component(ng-repeat="(key,item) in config.components",ng-title="{{key}}",ng-type="{{item.type}}",ng-segues="item.segues")
+        #panel.col-md-3
+            form.form-inline(role="form")
+                .form-group
+                    input#new-component-name.form-control(placeholder="Enter Name",ng-model="nameToAdd")
+                    select.form-control(ng-model="selectedType")
+                        option(ng-repeat="item in types",value="{{item}}") {{item}}
+                #new-component-btn.btn.btn-success(ng-click="addConfig()") add

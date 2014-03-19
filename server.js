@@ -3,18 +3,35 @@ var http = require('http');
 var messenger= require('./lib/msg/messenger');
 var Spiderman =require('./lib/spiderman');
 var yaml = require('js-yaml');
-var fs=require('fs');
+var stylus = require('stylus');
+var nib = require('nib');
+var path = require('path');
+var fs = require("fs");
 
 var app = express();
 app.configure(function() {
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
 	app.use(express.cookieParser());
-	app.use(express.bodyParser());	
-	app.use('/public', express.static(__dirname + '/public'));
+	app.use(express.bodyParser());
+    app.use(stylus.middleware({
+        src: __dirname + '/public/assets',
+        compile: function compile(str, path) {
+          return stylus(str)
+            .set('filename', path)
+            .use(nib());
+        }
+    }));
+    app.use(express.static(path.join(__dirname, 'public/assets')));
 	app.use(app.router);
 });
 
 app.get('/',function (req,res){
-	res.sendfile(__dirname+'/public/index.html')
+    var config = yaml.load(fs.readFileSync('./config.yaml').toString());
+
+    res.render('index', {
+        config: config
+    });
 })
 
 
@@ -28,7 +45,7 @@ io.sockets.on('connection', function (socket) {
 	var clientId;
 
 	socket.on('register', function () {
-		clientId=messenger.registerClient(function(msg){		
+		clientId=messenger.registerClient(function(msg){
 			socket.emit('data',msg);
 		});
 		socket.emit('register:success',clientId);
