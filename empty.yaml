@@ -2,10 +2,6 @@ components:
   initializer:   
     type: initializer
     segues:
-      - to: shopList
-        func: 
-          |
-           
   mongodb:   
     type: mongodbAdaptor
     dbConfig:

@@ -88,6 +88,7 @@ app.directive("component", ["$timeout",function($timeout){
                         });
                         connection.bind('click',function(conn){
                             scope.onEditConnection({
+                                $component:scope.item,
                                 $connection:conn,
                                 $segue:segue
                             });
@@ -146,10 +147,10 @@ app.controller('configCtrl', ['$scope', function($scope){
         }
     }
 
-    $scope.beginEditSegue = function($connection, $segue){
+    $scope.beginEditSegue = function($connection,$component, $segue){
         $('#editor').modal({})
         $scope.segueToEdit=$segue;
-        $scope.componentToEdit=this.item;
+        $scope.componentToEdit=$component;
         $scope.connectionToEdit=$connection;
         editor.setValue($segue.func);
         //console.log($connection,this,$segue);
@@ -180,7 +181,7 @@ app.controller('configCtrl', ['$scope', function($scope){
             }
             segues.push(segue);
             connection.bind('click',function(conn){
-                $scope.beginEditSegue(conn,segue)
+                $scope.beginEditSegue(conn,$scope.config.components[sourceTitle],segue)
             })
         });
         return true;
