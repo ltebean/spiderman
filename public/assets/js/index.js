@@ -181,11 +181,11 @@ app.controller('configCtrl', ['$scope', function($scope){
     }
 
     $scope.beginEditSegue = function($connection,$component, $segue){
-        $('#editor').modal({})
         $scope.segueToEdit=$segue;
         $scope.componentToEdit=$component;
         $scope.connectionToEdit=$connection;
         editor.setValue($segue.func);
+        $('#editor').modal({})
         //console.log($connection,this,$segue);
     }
 
