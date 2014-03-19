@@ -132,9 +132,10 @@ app.controller('configCtrl', ['$scope', function($scope){
     $scope.nameToAdd = "";
     $scope.selectedType = Object.keys($scope.config.components)[0];
     var plumbBoard = window.plumbBoard;
+
     $scope.addConfig = function(){
         var key = $scope.nameToAdd;
-        var type = $scope.selectedType;
+        var type = 'pageProcessor'
         if($scope.config.components[key]){
             return alert("Key " + key + "already exists");
         }else{
@@ -160,7 +161,7 @@ app.controller('configCtrl', ['$scope', function($scope){
     }
 
     $scope.updateSegue=function(){
-        $scope.segueToEdit=editor.getValue();
+        $scope.segueToEdit.func=editor.getValue();
     }
 
     $scope.runJob=function(){
@@ -168,14 +169,19 @@ app.controller('configCtrl', ['$scope', function($scope){
     }
 
     plumbBoard.bind("connectionDragStop",function(connection){
+       
         var sourceTitle = angular.element(connection.source).scope().key;
         var targetTitle = angular.element(connection.target).scope().key;
         $scope.$apply(function(){
             var segues = $scope.config.components[sourceTitle].segues = $scope.config.components[sourceTitle].segues || [];
-            segues.push({
+            var segue={
                 func: "",
                 to: targetTitle
-            });
+            }
+            segues.push(segue);
+            connection.bind('click',function(conn){
+                $scope.beginEditSegue(conn,segue)
+            })
         });
         return true;
     });

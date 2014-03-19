@@ -27,12 +27,13 @@ app.configure(function() {
 });
 
 app.get('/',function (req,res){
-    var config = yaml.load(fs.readFileSync('./config.yaml').toString());
+    var config = yaml.load(fs.readFileSync('./empty.yaml').toString());
 
     res.render('index', {
         title: "Spiderman",
         config: config
     });
+
 })
 
 

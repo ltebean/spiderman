@@ -18,13 +18,12 @@ block content
                 ng-edit-connection="beginEditSegue($connection,$segue)"
             )
         #panel.col-md-3
-            form.form-inline(role="form")
+            form.form-horizontal(role="form")
                 .form-group
-                    input#new-component-name.form-control(placeholder="Enter Name",ng-model="nameToAdd")
-                    select.form-control(ng-model="selectedType")
-                        option(ng-repeat="item in types",value="{{item}}") {{item}}
-                .btn.btn-success(ng-click="addConfig()") add
-                .btn.btn-success(ng-click="runJob()") run
+                    input.form-control(placeholder="Enter Name",ng-model="nameToAdd")
+                    .btn.btn-success(ng-click="addConfig()") add
+                .form-group
+                    .btn.btn-success(ng-click="runJob()") run
         #editor.modal.fade
             .modal-dialog
                 .modal-content
