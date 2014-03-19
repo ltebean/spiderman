@@ -30,6 +30,7 @@ app.get('/',function (req,res){
     var config = yaml.load(fs.readFileSync('./config.yaml').toString());
 
     res.render('index', {
+        title: "Spiderman",
         config: config
     });
 })
