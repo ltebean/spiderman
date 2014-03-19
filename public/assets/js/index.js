@@ -134,8 +134,8 @@ app.controller('configCtrl', ['$scope', function($scope){
     $scope.selectedType = Object.keys($scope.config.components)[0];
     var plumbBoard = window.plumbBoard;
 
-    $scope.addConfig = function(){
-        var key = $scope.nameToAdd;
+    $scope.addPageProcessor = function(){
+        var key = $scope.pageProcessorToAdd.name;
         var type = 'pageProcessor'
         if($scope.config.components[key]){
             return alert("Key " + key + "already exists");
@@ -143,6 +143,25 @@ app.controller('configCtrl', ['$scope', function($scope){
             $scope.config.components[key] = {
                 segues: [],
                 type: type
+            }
+        }
+    }
+
+    $scope.addMongodbAdaptor = function(){
+        var key = $scope.mongodbAdaptorToAdd.name;
+        var type = 'mongodbAdaptor'
+        if($scope.config.components[key]){
+            return alert("Key " + key + "already exists");
+        }else{
+            $scope.config.components[key] = {
+                segues: [],
+                type: type,
+                dbConfig:{
+                    host:$scope.mongodbAdaptorToAdd.dbConfig.host,
+                    port:$scope.mongodbAdaptorToAdd.dbConfig.port,
+                    db:$scope.mongodbAdaptorToAdd.dbConfig.db,
+                    collection:$scope.mongodbAdaptorToAdd.dbConfig.collection
+                }
             }
         }
     }

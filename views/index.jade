@@ -18,12 +18,51 @@ block content
                 ng-edit-connection="beginEditSegue($connection,$segue)"
             )
         #panel.col-md-3
-            form.form-horizontal(role="form")
-                .form-group
-                    input.form-control(placeholder="Enter Name",ng-model="nameToAdd")
-                    .btn.btn-success(ng-click="addConfig()") add
-                .form-group
-                    .btn.btn-success(ng-click="runJob()") run
+            div.panel.panel-default
+                div.panel-heading Operation
+                div.panel-body
+                    a.btn.btn-warning(ng-click="runJob()") Run Job
+                    a.btn.btn-warning(ng-click="",style="margin-left:5px") Save Draft
+                    a.btn.btn-warning(ng-click="",style="margin-left:5px") Load Draft
+            div.panel.panel-default
+                div.panel-heading Add PageProccesor
+                div.panel-body
+                    form.form-horizontal(role="form",name="addProcessorForm")
+                        fieldset
+                            .form-group
+                                lable.col-sm-2.control-label name:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter Name",ng-model="pageProcessorToAdd.name",ng-required="true")
+                             .form-group
+                div.panel-footer
+                    a.btn.btn-warning(ng-click="addPageProcessor()",ng-disabled="!addProcessorForm.$valid") Add   
+            div.panel.panel-default
+                div.panel-heading Add MongodbAdaptor
+                div.panel-body
+                    form.form-horizontal(role="form",name="addMongodbForm")
+                        fieldset
+                            .form-group
+                                lable.col-sm-2.control-label name:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter Name",ng-model="mongodbAdaptorToAdd.name",ng-required="true")
+                            .form-group
+                                lable.col-sm-2.control-label host:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter DB Host",ng-model="mongodbAdaptorToAdd.dbConfig.host",ng-required="true")
+                            .form-group
+                                lable.col-sm-2.control-label port:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter DB Port",ng-model="mongodbAdaptorToAdd.dbConfig.port",ng-required="true")
+                            .form-group
+                                lable.col-sm-2.control-label db:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter DB Name",ng-model="mongodbAdaptorToAdd.dbConfig.db",ng-required="true")
+                            .form-group
+                                lable.col-sm-2.control-label col:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter Collection",ng-model="mongodbAdaptorToAdd.dbConfig.collection",ng-required="true")
+                div.panel-footer
+                    a.btn.btn-warning(ng-click="addMongodbAdaptor()",ng-disabled="!addMongodbForm.$valid") Add       
         #editor.modal.fade
             .modal-dialog
                 .modal-content
@@ -38,6 +77,6 @@ block content
                     .modal-footer
                         button.btn.btn-default(type='button', data-dismiss='modal') cancel
                         button.btn.btn-danger(type='button',ng-click='deleteSegue()', data-dismiss='modal') delete
-                        button.btn.btn-primary(type='button',ng-click='updateSegue()' data-dismiss='modal') confirm
+                        button.btn.btn-warning(type='button',ng-click='updateSegue()' data-dismiss='modal') confirm
 
 
