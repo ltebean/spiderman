@@ -166,6 +166,20 @@ app.controller('configCtrl', ['$scope', function($scope){
         }
     }
 
+    $scope.saveDraft=function(){
+        localStorage.draft=JSON.stringify(config);
+        alert('saved');
+    }
+
+    $scope.loadDraft=function(){
+        var draft=localStorage.draft;
+        if(draft){
+            config=JSON.parse(draft);
+            alert('loaded');
+        }
+
+    }
+
     $scope.beginEditSegue = function($connection,$component, $segue){
         $('#editor').modal({})
         $scope.segueToEdit=$segue;
