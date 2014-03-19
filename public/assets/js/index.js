@@ -111,6 +111,22 @@ app.directive("component", ["$timeout",function($timeout){
 }]);
 
 app.controller('configCtrl', ['$scope', function($scope){
+    
+
+    var socket = io.connect('http://localhost');
+    socket.emit('register', {});
+    socket.on('register:success',function(clientId){
+        console.log('clientId:'+clientId);
+       
+    });
+    socket.on('data', function (data) {
+        console.log(data);
+    });
+
+    var editor = ace.edit("segue-func");
+    editor.getSession().setMode("ace/mode/javascript");
+
+
     $scope.config = window.config;
     $scope.types = window.types;
     $scope.nameToAdd = "";
@@ -129,8 +145,26 @@ app.controller('configCtrl', ['$scope', function($scope){
         }
     }
 
-    $scope.doSth = function($connection, $segue){
-        console.log($connection,this,$segue);
+    $scope.beginEditSegue = function($connection, $segue){
+        $('#editor').modal({})
+        $scope.segueToEdit=$segue;
+        $scope.componentToEdit=this.item;
+        $scope.connectionToEdit=$connection;
+        editor.setValue($segue.func);
+        //console.log($connection,this,$segue);
+    }
+
+    $scope.deleteSegue=function(){
+        $scope.componentToEdit.segues.splice($scope.componentToEdit.segues.indexOf($scope.segueToEdit),1);
+        plumbBoard.detach($scope.connectionToEdit);
+    }
+
+    $scope.updateSegue=function(){
+        $scope.segueToEdit=editor.getValue();
+    }
+
+    $scope.runJob=function(){
+        socket.emit('job:start', $scope.config);
     }
 
     plumbBoard.bind("connectionDragStop",function(connection){

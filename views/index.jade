@@ -5,7 +5,8 @@ block script
         var config = !{JSON.stringify(config)}
         var types = !{JSON.stringify(Object.keys(config.components))}
     script(src="/js/index.js")
-
+    script(src="/ace-builds/src-noconflict/ace.js")
+    script(src="/socket.io/socket.io.js")
 block content
     #app.row(ng-controller="configCtrl")
         #board.col-md-9
@@ -14,7 +15,7 @@ block content
                 ng-title="{{key}}",
                 ng-type="{{item.type}}",
                 ng-segues="item.segues",
-                ng-edit-connection="doSth($connection,$segue)"
+                ng-edit-connection="beginEditSegue($connection,$segue)"
             )
         #panel.col-md-3
             form.form-inline(role="form")
@@ -22,22 +23,22 @@ block content
                     input#new-component-name.form-control(placeholder="Enter Name",ng-model="nameToAdd")
                     select.form-control(ng-model="selectedType")
                         option(ng-repeat="item in types",value="{{item}}") {{item}}
-                #new-component-btn.btn.btn-success(ng-click="addConfig()") add
+                .btn.btn-success(ng-click="addConfig()") add
+                .btn.btn-success(ng-click="runJob()") run
         #editor.modal.fade
-        .modal-dialog
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-                    h4.modal-title Edit Segue
-                .modal-body
-                    form.form-horizontal(role='form')
-                        .form-group
-                            label.col-sm-2.control-label(for='inputEmail3') function:
-                            .col-sm-10
-                                textarea#segue-func.form-control(style='height:200px', placeholder='')
-                .modal-footer
-                    button.btn.btn-default(type='button', data-dismiss='modal') cancel
-                    button#delete-segue-btn.btn.btn-danger(type='button', data-dismiss='modal') delete
-                    button#update-segue-btn.btn.btn-primary(type='button', data-dismiss='modal') confirm
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                        h4.modal-title Edit Segue
+                    .modal-body
+                        form.form-horizontal(role='form')
+                            .form-group
+                                .col-sm-12
+                                    #segue-func.form-control(style='height:200px;font-size:14px;', placeholder='')
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal') cancel
+                        button.btn.btn-danger(type='button',ng-click='deleteSegue()', data-dismiss='modal') delete
+                        button.btn.btn-primary(type='button',ng-click='updateSegue()' data-dismiss='modal') confirm
 
 
