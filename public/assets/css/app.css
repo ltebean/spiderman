@@ -41,6 +41,10 @@ body,
   color: #fff;
 }
 .w .title {
+  font-size: 14px;
+  margin-right: 2px;
+}
+.w .type {
   margin-right: 8px;
 }
 .w .ep {

@@ -55,7 +55,12 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('job:start',function(config){
 		config.clientId=clientId;
-		new Spiderman(config).start();
+		try{
+			new Spiderman(config).start();
+		}catch(err){
+			socket.emit('data',err);
+
+		}
 	})
 
 	socket.on('disconnect', function () {

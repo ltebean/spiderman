@@ -4,10 +4,11 @@ app.directive("component", ["$timeout",function($timeout){
         scope: {
             title:"@ngTitle",
             type:"@ngType",
-            segues:"=ngSegues"
+            segues:"=ngSegues",
+            onEditConnection:"&ngEditConnection"
         },
         replace:true,
-        template: "<div class='component w'><span class='title'>{{title}}</span>(<span class='type'>{{type}}</span>)<span class='ep'></span></div>",
+        template: "<div class='component w'><span class='title'>{{title}}</span><span class='type'>({{type}})</span><span class='ep'></span></div>",
         link: function(scope, element, attrs){
             var origElem = element.get(0);
             var canvas = $("#board");
@@ -76,7 +77,7 @@ app.directive("component", ["$timeout",function($timeout){
             $timeout(function(){
                 if(scope.segues){
                     scope.segues.forEach(function(segue){
-                        plumbBoard.connect({
+                        var connection=plumbBoard.connect({
                             source:origElem,
                             target:$("[ng-title=" + segue.to + "]").get(0),
 
@@ -85,6 +86,12 @@ app.directive("component", ["$timeout",function($timeout){
                             hoverPaintStyle:{strokeStyle:"#056"},
                             anchor:"Continuous",
                         });
+                        connection.bind('click',function(conn){
+                            scope.onEditConnection({
+                                $connection:conn,
+                                $segue:segue
+                            });
+                        })
                     });
                 }
             },0);
@@ -108,7 +115,7 @@ app.controller('configCtrl', ['$scope', function($scope){
     $scope.types = window.types;
     $scope.nameToAdd = "";
     $scope.selectedType = Object.keys($scope.config.components)[0];
-
+    var plumbBoard = window.plumbBoard;
     $scope.addConfig = function(){
         var key = $scope.nameToAdd;
         var type = $scope.selectedType;
@@ -120,6 +127,10 @@ app.controller('configCtrl', ['$scope', function($scope){
                 type: type
             }
         }
+    }
+
+    $scope.doSth = function($connection, $segue){
+        console.log($connection,this,$segue);
     }
 
     plumbBoard.bind("connectionDragStop",function(connection){

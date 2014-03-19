@@ -12,6 +12,8 @@
 
 	<script src="/public/assets/js/jsPlumb.js "></script>
 	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="/public/assets/ace-builds/src-noconflict/ace.js"></script>
+
 	<script>
 		var socket = io.connect('http://localhost');
 			socket.emit('register', {});
@@ -25,185 +27,191 @@
 	</script>
 
 	<script type=""text/javascript>
-		var config = {
-			components: {
-				initializer: {
-					position: {
-						top: '100px',
-						left: '800px'
-					},
-					segues:[],
-					type: 'initializer'
-				},
-				mongodb: {
-                    dbConfig:{
-                        host:'127.0.0.1',
-                        port:27017,
-                        db:'spider',
-                        collection:'shop'
-                    },
-					position: {
-						top: '400px',
-						left: '800px'
-					},
-					segues:[],
-					type: 'mongodbAdaptor',
-				}
-				// shopList: {
-				// 	type: 'pageProcessor',
-				// 	position: {
-				// 		top: '100px',
-				// 		left: '400px'
-				// 	},
-
-				// 	segues: [{
-				// 		to: 'shopList',
-				// 		func: 'offer("http://www.dianping.com"+$(".NextPage").attr("href"));'
-				// 	}, {
-				// 		to: 'shop',
-				// 		func: '$(".BL").each(function() {offer("http://www.dianping.com"+($(this).attr("href")));})'
-				// 	}]
-				// },
-				// shop: {
-				// 	position: {
-				// 		top: '400px',
-				// 		left: '400px'
-				// 	},
-				// 	type: 'pageProcessor',
-				// 	segues: [{
-				// 		to: 'mongodb',
-				// 		func: ' offer({shopName:$(".shop-title").text()});'
-				// 	}]
-				// }
-			}
-		};
-
-		function Component(options){
-			this.name=options.name;
-			this.config=options.config;
-			if(!this.config.segues || this.config.segues.length==0){
-				this.config.segues=[];
-			}
-			this.container=options.container;
-			this.instance=options.instance;
-			var that=this;
-			this.instance.bind("connection", function(info) {			
-				for (var i = 0; i < that.config.segues.length; i++) {
-					if(info.targetId==that.config.segues[i].to){
-						return;
-					}
-				};	
-				if(info.sourceId==that.name){
-					that.config.segues.push({
-						to:info.targetId,
-						func:''
-					});
-				}
-				//console.dir(that.config)
-			});
-			this.instance.bind("click", function(connection) {
-				if(connection.sourceId!=that.name){
-					return;
-				}
-				for (var i = 0; i < that.config.segues.length; i++) {
-					var segue = that.config.segues[i]; 
-					if(connection.targetId==segue.to){
-						// alert(segue.func)
-						//that.instance.detach(connection)
-                        $('#segue-func').val(segue.func);
-                        currentSegue=segue;
-                        currentConnection=connection;
-                        currentComponentConfig=that.config
-                        $('#editor').modal({})
-					}
-				};
-			});
-
-		}
-
-        var currentComponentConfig;
-
-        var currentSegue;
-
-        var currentConnection;
-
-		Component.prototype.redraw = function() {
-			$('#'+this.name).remove();
-			var div = $("<div>", {
-				class: 'w',
-				id: this.name,
-				css: this.config.position
-			});
-			var title = $("<span>", {
-				class: 'title',
-				text: this.name
-			});
-			var ep = $("<span>", {
-				class: 'ep'
-			});
-			title.appendTo(div);
-			ep.appendTo(title);
-			div.appendTo(this.container)
-			this.dom = div;
-
-			var that=this
-			this.dom.mouseleave(function(e){
-				that.config.position=$(this).position();
-				//console.log(that.config.position)
-			})
-            initDom(this.dom);
-            function initDom(dom){
-                    that.instance.draggable(dom);
-
-                    // initialise all '.w' elements as connection targets.
-                    that.instance.makeTarget(dom, {
-                        dropOptions: {
-                            hoverClass: "dragHover"
-                        },
-                        anchor: "Continuous"
-                    });
-
-                    that.instance.makeSource(dom, {
-                        filter: ".ep", // only supported by jquery
-                        anchor: "Continuous",
-                        connector: ["StateMachine", {
-                            curviness: 20
-                        }],
-                        connectorStyle: {
-                            strokeStyle: "#5c96bc",
-                            lineWidth: 2,
-                            outlineColor: "transparent",
-                            outlineWidth: 4
-                        },
-                        maxConnections: 5,
-                        onMaxConnections: function(info, e) {
-                            alert("Maximum connections (" + info.maxConnections + ") reached");
-                        }
-                    });
-                }
-
-		};
-
-		Component.prototype.remove = function() {
-			$('#'+this.name).remove();
-		};
-
-		Component.prototype.drawConnection = function() {
-			for (var i = 0; i < this.config.segues.length; i++) {
-				var segue=this.config.segues[i];
-				this.instance.connect({
-					source: this.name,
-					target: segue.to
-				});
-			};	
-		};
+		
 
 
 		
 
 		(function() {
 
+
 			jsPlumb.ready(function() {
+				var config = {
+					components: {
+						initializer: {
+							position: {
+								top: '100px',
+								left: '800px'
+							},
+							segues:[],
+							type: 'initializer'
+						},
+						mongodb: {
+		                    dbConfig:{
+		                        host:'127.0.0.1',
+		                        port:27017,
+		                        db:'spider',
+		                        collection:'shop'
+		                    },
+							position: {
+								top: '400px',
+								left: '800px'
+							},
+							segues:[],
+							type: 'mongodbAdaptor',
+						}
+						// shopList: {
+						// 	type: 'pageProcessor',
+						// 	position: {
+						// 		top: '100px',
+						// 		left: '400px'
+						// 	},
+
+						// 	segues: [{
+						// 		to: 'shopList',
+						// 		func: 'offer("http://www.dianping.com"+$(".NextPage").attr("href"));'
+						// 	}, {
+						// 		to: 'shop',
+						// 		func: '$(".BL").each(function() {offer("http://www.dianping.com"+($(this).attr("href")));})'
+						// 	}]
+						// },
+						// shop: {
+						// 	position: {
+						// 		top: '400px',
+						// 		left: '400px'
+						// 	},
+						// 	type: 'pageProcessor',
+						// 	segues: [{
+						// 		to: 'mongodb',
+						// 		func: ' offer({shopName:$(".shop-title").text()});'
+						// 	}]
+						// }
+					}
+				};
+
+				function Component(options){
+					this.name=options.name;
+					this.config=options.config;
+					if(!this.config.segues || this.config.segues.length==0){
+						this.config.segues=[];
+					}
+					this.container=options.container;
+					this.instance=options.instance;
+					var that=this;
+					this.instance.bind("connection", function(info) {			
+						for (var i = 0; i < that.config.segues.length; i++) {
+							if(info.targetId==that.config.segues[i].to){
+								return;
+							}
+						};	
+						if(info.sourceId==that.name){
+							that.config.segues.push({
+								to:info.targetId,
+								func:''
+							});
+						}
+						//console.dir(that.config)
+					});
+					this.instance.bind("click", function(connection) {
+						if(connection.sourceId!=that.name){
+							return;
+						}
+						for (var i = 0; i < that.config.segues.length; i++) {
+							var segue = that.config.segues[i]; 
+							if(connection.targetId==segue.to){
+								// alert(segue.func)
+								//that.instance.detach(connection)
+		                        editor.setValue(segue.func);
+		                        currentSegue=segue;
+		                        currentConnection=connection;
+		                        currentComponentConfig=that.config
+		                        $('#editor').modal({})
+							}
+						};
+					});
+
+				}
+
+		        var currentComponentConfig;
+
+		        var currentSegue;
+
+
+		        var currentConnection;
+
+		        var editor = ace.edit("segue-func");
+				editor.getSession().setMode("ace/mode/javascript");
+
+				Component.prototype.redraw = function() {
+					$('#'+this.name).remove();
+					var div = $("<div>", {
+						class: 'w',
+						id: this.name,
+						css: this.config.position
+					});
+					var title = $("<span>", {
+						class: 'title',
+						text: this.name
+					});
+					var ep = $("<span>", {
+						class: 'ep'
+					});
+					title.appendTo(div);
+					ep.appendTo(title);
+					div.appendTo(this.container)
+					this.dom = div;
+
+					var that=this
+					this.dom.mouseleave(function(e){
+						that.config.position=$(this).position();
+						//console.log(that.config.position)
+					})
+		            initDom(this.dom);
+		            function initDom(dom){
+		                    that.instance.draggable(dom);
+
+		                    // initialise all '.w' elements as connection targets.
+		                    that.instance.makeTarget(dom, {
+		                        dropOptions: {
+		                            hoverClass: "dragHover"
+		                        },
+		                        anchor: "Continuous"
+		                    });
+
+		                    that.instance.makeSource(dom, {
+		                        filter: ".ep", // only supported by jquery
+		                        anchor: "Continuous",
+		                        connector: ["StateMachine", {
+		                            curviness: 20
+		                        }],
+		                        connectorStyle: {
+		                            strokeStyle: "#5c96bc",
+		                            lineWidth: 2,
+		                            outlineColor: "transparent",
+		                            outlineWidth: 4
+		                        },
+		                        maxConnections: 5,
+		                        onMaxConnections: function(info, e) {
+		                            alert("Maximum connections (" + info.maxConnections + ") reached");
+		                        }
+		                    });
+		                }
+
+				};
+
+				Component.prototype.remove = function() {
+					$('#'+this.name).remove();
+				};
+
+				Component.prototype.drawConnection = function() {
+					for (var i = 0; i < this.config.segues.length; i++) {
+						var segue=this.config.segues[i];
+						this.instance.connect({
+							source: this.name,
+							target: segue.to
+						});
+					};	
+				};
 
 				
 				// setup some defaults for jsPlumb. 
@@ -258,13 +266,15 @@
                 })
 
                 $('#update-segue-btn').click(function(){
-                    currentSegue.func=$('#segue-func').val();
+                    currentSegue.func=editor.getValue();
                 })
 
                 $('#run-job-btn').click(function(){
                     socket.emit('job:start', config);
 
                 })
+
+               
 
 				// suspend drawing and initialise.
 				function initBoard(){
@@ -324,9 +334,8 @@
       <div class="modal-body">
         <form class="form-horizontal" role="form">
           <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">function:</label>
-            <div class="col-sm-10">
-              <textarea id="segue-func" style="height:200px" class="form-control" id="" placeholder=""></textarea>
+            <div class="col-sm-12">
+              <div id="segue-func" style="height:200px;font-size:14px;" class="form-control" id="" placeholder=""></div>
             </div>
           </div>
         </form>
