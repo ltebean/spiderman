@@ -1,4 +1,5 @@
-Spiderman works much like alfred workflow and ios storyboard, you write crawler by defining some components, using segues to connet them, finally write some script to specify data that needs to be transfer from one component to the next;
+Spiderman makes it trivial work to write a crawler. It
+ works much like alfred workflow and ios storyboard, you write crawler by defining some components, using segues to connet them, finally write some script to specify data that needs to be transfer from one component to the next;
 
 The whole logic is stored in this form:
 
@@ -41,3 +42,10 @@ The whole logic is stored in this form:
 	    host: 127.0.0.1
 	    port: 27017
 	    collection: shop
+
+Run:
+
+	node server.js
+
+Then open http://localhost:3000, enjoy it~ 
+![demo](http://ww2.sinaimg.cn/large/7f3334f3gw1eel67znzjhj20zd0legoe.jpg)
