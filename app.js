@@ -3,9 +3,5 @@ var fs = require('fs');
 var Spiderman = require('./lib/spiderman.js');
 
 var config = yaml.load(fs.readFileSync('./config.yaml').toString());
+new Spiderman(config).start();
 
-try{
-	new Spiderman(config).start();
-}catch(err){
-	console.log(err);
-}
