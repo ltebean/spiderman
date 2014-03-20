@@ -117,7 +117,7 @@ app.controller('configCtrl', ['$scope', function($scope){
     var socket = io.connect('http://localhost');
     socket.emit('register', {});
     socket.on('register:success',function(clientId){
-        console.log('clientId:'+clientId);
+        console.log('register with clientId: '+clientId);
        
     });
     socket.on('data', function (data) {

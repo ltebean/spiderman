@@ -70,8 +70,8 @@ io.sockets.on('connection', function (socket) {
 		try{
 			new Spiderman(config).start();
 		}catch(err){
-			socket.emit('data',err);
-
+			console.log(err);
+			socket.emit('data','error: ' + err.message);
 		}
 	})
 
