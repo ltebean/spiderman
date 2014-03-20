@@ -1,6 +1,5 @@
 var express = require('express');
 var http = require('http');
-var messenger= require('./lib/msg/messenger');
 var Spiderman =require('./lib/spiderman');
 var yaml = require('js-yaml');
 var stylus = require('stylus');
@@ -56,20 +55,10 @@ io.set('transports', [
 ]);
 io.sockets.on('connection', function (socket) {
 
-	var clientId;
-
 	var worker;
 
-	socket.on('register', function () {
-		clientId=messenger.registerClient(function(msg){
-			socket.emit('data',msg);
-		});
-		socket.emit('register:success',clientId);
-		//msg.addMessage(weiboId,'hahaha');
-	});
-
 	socket.on('job:start',function(config){
-		config.clientId=clientId;
+
 		try{
 			if(worker){
 				worker.kill('SIGHUP');
@@ -78,7 +67,10 @@ io.sockets.on('connection', function (socket) {
 			worker.send(config);
 			socket.emit('data','starting job...');
 			worker.on('message',function(msg){
-				messenger.sendMessage(msg.clientId,msg.msg);
+				socket.emit('data',msg);
+			})
+			worker.on('close',function(code, signal){
+				socket.emit('data','worker process terminated due to receipt of signal '+ signal);
 			})
 		}catch(err){
 			console.log(err);
@@ -87,12 +79,11 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('job:stop',function(data){
-		worker && worker.kill('SIGHUP');
-		socket.emit('data','job stopped');
+		worker && socket.emit('data','stopping job...') && worker.kill('SIGHUP');
 	})
 
 	socket.on('disconnect', function () {
-		messenger.removeClient(clientId)
+
 	});
 });
 
