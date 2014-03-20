@@ -179,20 +179,6 @@ app.controller('configCtrl', ['$scope', function($scope){
         }
     }
 
-    $scope.saveDraft=function(){
-        localStorage.draft=JSON.stringify(config);
-        alert('saved');
-    }
-
-    $scope.loadDraft=function(){
-        var draft=localStorage.draft;
-        if(draft){
-            config=JSON.parse(draft);
-            alert('loaded');
-        }
-
-    }
-
     $scope.beginEditSegue = function($connection,$component, $segue){
         $scope.segueToEdit=$segue;
         $scope.componentToEdit=$component;
@@ -213,6 +199,10 @@ app.controller('configCtrl', ['$scope', function($scope){
 
     $scope.runJob=function(){
         socket.emit('job:start', $scope.config);
+    }
+
+    $scope.stopJob=function(){
+        socket.emit('job:stop', $scope.config);
     }
 
     plumbBoard.bind("connectionDragStop",function(connection){

@@ -7,6 +7,7 @@ var stylus = require('stylus');
 var nib = require('nib');
 var path = require('path');
 var fs = require("fs");
+var cp=require('child_process');
 
 var app = express();
 app.configure(function() {
@@ -57,6 +58,8 @@ io.sockets.on('connection', function (socket) {
 
 	var clientId;
 
+	var worker;
+
 	socket.on('register', function () {
 		clientId=messenger.registerClient(function(msg){
 			socket.emit('data',msg);
@@ -68,11 +71,24 @@ io.sockets.on('connection', function (socket) {
 	socket.on('job:start',function(config){
 		config.clientId=clientId;
 		try{
-			new Spiderman(config).start();
+			if(worker){
+				worker.kill('SIGHUP');
+			}
+			worker = cp.fork('./lib/worker.js');
+			worker.send(config);
+			socket.emit('data','starting job...');
+			worker.on('message',function(msg){
+				messenger.sendMessage(msg.clientId,msg.msg);
+			})
 		}catch(err){
 			console.log(err);
 			socket.emit('data','error: ' + err.message);
 		}
+	});
+
+	socket.on('job:stop',function(data){
+		worker && worker.kill('SIGHUP');
+		socket.emit('data','job stopped');
 	})
 
 	socket.on('disconnect', function () {
