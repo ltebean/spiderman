@@ -2,10 +2,5 @@ components:
   initializer:   
     type: initializer
     segues:
-  mongodb:   
-    type: mongodbAdaptor
-    dbConfig:
-      host: 127.0.0.1
-      port: 27017
-      db: spider
-      collection: shop
+  console:   
+    type: consoleAdaptor

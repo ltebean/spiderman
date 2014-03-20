@@ -25,7 +25,7 @@ block content
                     a.btn.btn-warning(ng-click="saveDraft()",style="margin-left:5px") Save Draft
                     a.btn.btn-warning(ng-click="loadDraft()",style="margin-left:5px") Load Draft
             div.panel.panel-default
-                div.panel-heading Add PageProccesor
+                div.panel-heading PageProccesor
                 div.panel-body
                     form.form-horizontal(role="form",name="addProcessorForm")
                         fieldset
@@ -34,10 +34,20 @@ block content
                                 div.col-sm-10
                                     input.form-control(type="text",placeholder="Enter Name",ng-model="pageProcessorToAdd.name",ng-required="true")
                              .form-group
-                div.panel-footer
-                    a.btn.btn-warning(ng-click="addPageProcessor()",ng-disabled="!addProcessorForm.$valid") Add   
+                    a.btn.btn-warning(ng-click="addPageProcessor()",ng-disabled="!addProcessorForm.$valid") Add 
             div.panel.panel-default
-                div.panel-heading Add MongodbAdaptor
+                div.panel-heading ConsoleAdaptor
+                div.panel-body
+                    form.form-horizontal(role="form",name="addConsoleForm")
+                        fieldset
+                            .form-group
+                                lable.col-sm-2.control-label name:
+                                div.col-sm-10
+                                    input.form-control(type="text",placeholder="Enter Name",ng-model="consoleAdaptorToAdd.name",ng-required="true")
+                             .form-group
+                    a.btn.btn-warning(ng-click="addConsoleAdaptor()",ng-disabled="!addConsoleForm.$valid") Add     
+            div.panel.panel-default
+                div.panel-heading MongodbAdaptor
                 div.panel-body
                     form.form-horizontal(role="form",name="addMongodbForm")
                         fieldset
@@ -61,7 +71,6 @@ block content
                                 lable.col-sm-2.control-label col:
                                 div.col-sm-10
                                     input.form-control(type="text",placeholder="Enter Collection",ng-model="mongodbAdaptorToAdd.dbConfig.collection",ng-required="true")
-                div.panel-footer
                     a.btn.btn-warning(ng-click="addMongodbAdaptor()",ng-disabled="!addMongodbForm.$valid") Add       
         #editor.modal.fade
             .modal-dialog

@@ -147,6 +147,19 @@ app.controller('configCtrl', ['$scope', function($scope){
         }
     }
 
+    $scope.addConsoleAdaptor = function(){
+        var key = $scope.consoleAdaptorToAdd.name;
+        var type = 'consoleAdaptor'
+        if($scope.config.components[key]){
+            return alert("Key " + key + "already exists");
+        }else{
+            $scope.config.components[key] = {
+                segues: [],
+                type: type
+            }
+        }
+    }
+
     $scope.addMongodbAdaptor = function(){
         var key = $scope.mongodbAdaptorToAdd.name;
         var type = 'mongodbAdaptor'
