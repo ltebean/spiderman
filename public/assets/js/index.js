@@ -114,7 +114,7 @@ app.directive("component", ["$timeout",function($timeout){
 app.controller('configCtrl', ['$scope', function($scope){
     
 
-    var socket = io.connect('http://localhost');
+    var socket = io.connect();
     socket.emit('register', {});
     socket.on('register:success',function(clientId){
         console.log('register with clientId: '+clientId);
