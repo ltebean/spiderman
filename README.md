@@ -49,7 +49,7 @@ The whole logic is stored in this form:
 
 #### 1. Installation
 
-	npm install -g spiderman
+	npm install -g spiderman-crawler
 	
 #### 2. Run a crawler
 
