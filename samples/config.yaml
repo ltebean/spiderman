@@ -26,12 +26,14 @@ components:
   shop:   
     type: pageProcessor
     segues:
-      - to: mongodb
+      - to: console
         func: 
           |
           offer({
           	  shopName:$(".shop-title").text()
           });
+  console:   
+    type: consoleAdaptor
   mongodb:   
     type: mongodbAdaptor
     dbConfig:

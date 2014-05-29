@@ -1,3 +1,5 @@
+##Introduction
+
 Spiderman makes it trivial work to write a crawler. It
  works much like alfred workflow and ios storyboard, you write crawler by defining some components, using segues to connet them, finally write some script to specify data that needs to be transfer from one component to the next;
 
@@ -43,9 +45,24 @@ The whole logic is stored in this form:
 	    port: 27017
 	    collection: shop
 
-Run:
+##Usage
 
-	node server.js
+#### 1. Installation
 
-Then open http://localhost:3000, enjoy it~ 
-![demo](http://ww2.sinaimg.cn/large/7f3334f3gw1eel67znzjhj20zd0legoe.jpg)
+	npm install -g spiderman
+	
+#### 2. Run a crawler
+
+The sample config files are listed in the samples folder, run a crawler by:
+
+	spiderman run -p [path to the config file]
+	
+##Program API
+
+Spiderman also provide the program api:
+
+	var Spiderman = require('spiderman-crawler');
+	new Spiderman({
+			configFile: 'path ro the config file'
+		}).start();
+
