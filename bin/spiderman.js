@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var Spiderman = require('../lib/spiderman.js');
+var Spiderman = require('../lib/spiderman');
 
 program.version('0.0.1')
-
 
 program
 	.command('run')
