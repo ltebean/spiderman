@@ -56,13 +56,29 @@ The whole logic is stored in this form:
 The sample config files are listed in the samples folder, run a crawler by:
 
 	spiderman run -p [path to the config file]
+
+#### 3. Run a specifed component
+
+	spiderman test -p [path to the config file] -n [component name] -d [init data]
+
+For example:
+
+	spiderman test -p ./samples/config.yaml -n shopList -d http://www.dianping.com/search/category/1/0 
 	
 ##Program API
 
 Spiderman also provide the program api:
 
 	var Spiderman = require('spiderman-crawler');
-	new Spiderman({
-			configFile: 'path ro the config file'
-		}).start();
+
+	var spiderman = new Spiderman({
+		configFile: 'path ro the config file'
+	});
+
+	// run the crawler
+	spiderman.start();
+
+	// run a specified component
+	spiderman.test('shopList','http://www.dianping.com/search/category/1/0');
+
 
