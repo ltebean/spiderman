@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/ltebean/spiderman.svg?branch=master)](https://travis-ci.org/ltebean/spiderman)
+
 ##Introduction
 
 Spiderman makes it trivial work to write a crawler. It
