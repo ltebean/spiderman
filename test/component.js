@@ -1,5 +1,4 @@
 var should = require('chai').should();
-
 var PageProcessor = require('../lib/component/pageProcessor');
 var MongodbAdaptor = require('../lib/component/mongodbAdaptor');
 var MysqlAdaptor = require('../lib/component/mysqlAdaptor');
