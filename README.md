@@ -15,7 +15,7 @@ There are a few built-in components, they are:
 * mongodbAdaptor:  save data into mongodb
 * mysqlAdaptor: save data into mysql
 
-#####2. Segue
+####2. Segue
 
 You use segue to connect components, write some script(jquery support) to fetch the data wanted, and finally use the offer method to transfer data to the next component.
 
@@ -83,15 +83,15 @@ The whole logic is stored in this form:
 
 The sample config files are listed in the samples folder, run a crawler by:
 
-	spiderman run -p [path to the config file]
+	spiderman start -p 'path to the config file'
 
 #### 3. Run a specifed component
 
-	spiderman test -p [path to the config file] -n [component name] -d [init data]
+	spiderman run -p 'path to the config file' -n 'component name' -d 'init data'
 
 For example:
 
-	spiderman test -p ./samples/config.yaml -n shopList -d http://www.dianping.com/search/category/1/0 
+	spiderman run -p ./samples/dianping.yaml -n shopList -d http://www.dianping.com/search/category/1/0 
 	
 ##Program API
 
@@ -100,13 +100,14 @@ Spiderman also provide the program api:
 	var Spiderman = require('spiderman-crawler');
 
 	var spiderman = new Spiderman({
-		configFile: 'path ro the config file'
+		configFile: 'path ro the config file',
+		logLevel: 'error'
 	});
 
 	// run the crawler
 	spiderman.start();
 
-	// run a specified component
-	spiderman.test('shopList','http://www.dianping.com/search/category/1/0');
+	// run a single component
+	spiderman.run('shopList','http://www.dianping.com/search/category/1/0');
 
 

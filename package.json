@@ -1,6 +1,6 @@
 {
   "name": "spiderman-crawler",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Spiderman makes it trivial work to write a crawler. Just define some components, use segues to connet them, finally write some script to specify data that needs to be transfer from one component to the next, that's all!",
   "repository": {
     "type": "git",

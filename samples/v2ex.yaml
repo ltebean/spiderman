@@ -1,0 +1,20 @@
+components:
+  initializer:   
+    type: initializer
+    segues:
+      - to: index
+        func: 
+          |
+          offer("https://www.v2ex.com");
+  index:   
+    type: pageProcessor
+    segues:
+      - to: console
+        func: 
+          |
+          var threads=$(".item_title a");
+          threads.each(function(index,thread){
+            offer($(thread).html());
+          });
+  console:   
+    type: consoleAdaptor

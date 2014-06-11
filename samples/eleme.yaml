@@ -1,0 +1,52 @@
+components:
+  initializer:   
+    type: initializer
+    segues:
+      - to: addressList
+        func: 
+          |
+          offer("http://ele.me/sitemap/place/310000/a/1");
+  addressList:   
+    type: pageProcessor
+    segues:
+      - to: addressList
+        func: 
+          |
+          var nextPageLi=$(".pagination .active").next();
+          if(nextPageLi.length==0){
+          	  return;
+          }
+          if(nextPageLi.hasClass("prev")||nextPageLi.hasClass("next")){
+          	  return;
+          }
+          offer("http://ele.me"+nextPageLi.find("a").attr("href"));
+      - to: shopList
+        func: 
+          |
+          $(".restaurant-list a").each(function() {
+          	  offer("http://ele.me"+($(this).attr("href")));
+          })
+  shopList:   
+    type: pageProcessor
+    segues:
+      - to: shop
+        func: 
+          |
+          var links=$(".restaurant-link");
+          links && links.each(function(){
+          	  offer($(this).attr("href"))
+          });
+  shop:   
+    type: pageProcessor
+    segues:
+      - to: console
+        func: 
+          |
+          var shopName = $(".rst-name").text()
+          var address = $(".rst-detail-list .glyph-location").parent().text().trim();
+          offer(JSON.stringify({
+          	  shopName:shopName,
+          	  address:address
+          }));
+  console:   
+    type: consoleAdaptor

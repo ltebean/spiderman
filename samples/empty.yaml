@@ -4,8 +4,3 @@ components:
     segues:
   console:   
     type: consoleAdaptor
-    dbConfig:
-      host: 127.0.0.1
-      port: 27017
-      db: spider
-      collection: shop
